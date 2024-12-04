@@ -9,11 +9,19 @@ if (file_exists($envFile)) {
     foreach ($lines as $line) {
         if (strpos($line, '=') !== false && strpos($line, '#') !== 0) {
             list($key, $value) = explode('=', $line, 2);
-            $_ENV[trim($key)] = trim($value);
-            putenv(sprintf('%s=%s', trim($key), trim($value)));
+            $key = trim($key);
+            $value = trim($value);
+            putenv("$key=$value");
+            $_ENV[$key] = $value;
+            $_SERVER[$key] = $value;
         }
     }
 }
+
+// Debug log environment variables
+error_log("Environment variables after loading:");
+error_log("SUPABASE_URL: " . getenv('SUPABASE_URL'));
+error_log("SUPABASE_ANON_KEY: " . getenv('SUPABASE_ANON_KEY'));
 
 require_once __DIR__ . '/../src/Database.php';
 require_once __DIR__ . '/../src/Models/Provider.php';
