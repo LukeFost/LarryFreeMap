@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '/../src/Middleware/AuthMiddleware.php';
+$jwt = AuthMiddleware::requireAuth();
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,10 +17,14 @@
     <div id="map"></div>
     <button class="location-button" onclick="getCurrentLocation()">📍 My Location</button>
     <div id="location-status"></div>
+    <?php
+    $user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+    $userEmail = $user ? htmlspecialchars($user['email']) : '';
+    ?>
     <div class="nav-box">
         <div class="user-profile">
             <i class="fas fa-user-circle"></i>
-            <span id="user-email">Loading...</span>
+            <span id="user-email"><?php echo $userEmail; ?></span>
         </div>
         <nav>
             <a href="dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>

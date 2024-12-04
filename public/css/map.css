@@ -9,6 +9,22 @@ body {
     height: 100vh;
 }
 
+/* Move zoom controls to bottom right */
+.leaflet-control-zoom {
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    top: auto !important;
+    left: auto !important;
+}
+
+/* Ensure navbox doesn't overlap with controls */
+.nav-box {
+    margin-top: 10px;
+    margin-left: 10px;
+    z-index: 999;
+}
+
 .popup-content {
     padding: 10px;
 }
