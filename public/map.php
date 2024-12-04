@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/../src/Middleware/AuthMiddleware.php';
 $jwt = AuthMiddleware::requireAuth();
-session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
