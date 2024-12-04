@@ -14,10 +14,10 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-# Set variables
-APACHE_USER="www-data"
-APACHE_GROUP="www-data"
-PROJECT_PATH="/var/www/html/larryfree"
+# Set variables for Bitnami LAMP stack
+APACHE_USER="daemon"
+APACHE_GROUP="daemon"
+PROJECT_PATH="/opt/bitnami/apache2/htdocs/project"
 
 # Create project directory
 echo -e "${YELLOW}Creating project directory...${NC}"
@@ -54,9 +54,9 @@ if [ ! -f "$PROJECT_PATH/.env" ]; then
     sed -i "s|your-anon-key|$supabase_anon_key|" "$PROJECT_PATH/.env"
 fi
 
-# Configure Apache virtual host
+# Configure Apache virtual host for Bitnami
 echo -e "${YELLOW}Configuring Apache...${NC}"
-cat > "/etc/apache2/sites-available/larryfree.conf" << EOF
+cat > "/opt/bitnami/apache2/conf/vhosts/project-vhost.conf" << EOF
 <VirtualHost *:80>
     ServerAdmin webmaster@localhost
     DocumentRoot "$PROJECT_PATH/public"
@@ -68,24 +68,19 @@ cat > "/etc/apache2/sites-available/larryfree.conf" << EOF
         Require all granted
     </Directory>
 
-    ErrorLog \${APACHE_LOG_DIR}/larryfree-error.log
-    CustomLog \${APACHE_LOG_DIR}/larryfree-access.log combined
+    ErrorLog "/opt/bitnami/apache2/logs/project-error.log"
+    CustomLog "/opt/bitnami/apache2/logs/project-access.log" combined
 </VirtualHost>
 EOF
 
-# Enable the site and required modules
-a2ensite larryfree.conf
-a2enmod rewrite
-a2enmod headers
-
-# Restart Apache
+# Restart Apache using Bitnami's script
 echo -e "${YELLOW}Restarting Apache...${NC}"
-systemctl restart apache2
+/opt/bitnami/ctlscript.sh restart apache
 
 echo -e "${GREEN}Setup complete!${NC}"
 echo -e "Your application is now available at: http://your-server-ip"
 echo -e "Please ensure to:"
 echo -e "1. Configure your DNS if needed"
-echo -e "2. Set up SSL/HTTPS using Certbot if needed"
+echo -e "2. Set up SSL/HTTPS if needed"
 echo -e "3. Check the Apache error logs if you encounter any issues:"
-echo -e "   tail -f /var/log/apache2/larryfree-error.log"
+echo -e "   tail -f /opt/bitnami/apache2/logs/project-error.log"
