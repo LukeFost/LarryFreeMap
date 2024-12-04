@@ -9,6 +9,20 @@ body {
     min-height: 100vh;
 }
 
+select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: white;
+}
+
+select:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
 .auth-container {
     background: white;
     padding: 2rem;
