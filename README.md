@@ -79,7 +79,37 @@ The setup script will automatically:
 - Create and configure the .env file with your Supabase credentials
 - Restart Apache using Bitnami's control script
 
-### 6. Verify Installation
+### 6. PostgreSQL PHP Extension Setup
+Install and configure the PostgreSQL PHP extension:
+
+```bash
+# Install PostgreSQL PHP extension
+sudo apt install php-pgsql
+
+# Check which PHP configuration file is being used
+/opt/bitnami/php/bin/php --ini
+
+# Edit the PostgreSQL configuration file
+sudo nano /opt/bitnami/php/etc/conf.d/pgsql.ini
+```
+
+Add or modify these lines in the configuration file:
+```ini
+extension=pdo_pgsql.so
+extension=pgsql.so
+```
+
+Restart the services to apply changes:
+```bash
+# Restart PHP-FPM and Apache
+sudo /opt/bitnami/ctlscript.sh restart php-fpm
+sudo /opt/bitnami/ctlscript.sh restart apache
+
+# Verify the extensions are loaded
+/opt/bitnami/php/bin/php -m | grep -i pgsql
+```
+
+### 7. Verify Installation
 1. Open your web browser
 2. Navigate to `http://<Your_Instance_IP>/`
 3. You should see the login page if everything is set up correctly
@@ -95,6 +125,9 @@ The setup script will automatically:
   - Use: `sudo /opt/bitnami/ctlscript.sh restart apache`
 - To check Apache configuration:
   - Use: `sudo /opt/bitnami/apache2/bin/apachectl -t`
+- If database connections fail:
+  - Verify PostgreSQL extensions are loaded: `/opt/bitnami/php/bin/php -m | grep -i pgsql`
+  - Check PHP configuration: `/opt/bitnami/php/bin/php --ini`
 
 ## Security Notes
 - Remember to secure your .env file with proper credentials
