@@ -152,9 +152,22 @@ try {
             throw new Exception('Invalid action');
     }
 } catch (Exception $e) {
-    logDebug('Error occurred', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-    $response['message'] = $e->getMessage();
-    http_response_code(400);
+    logDebug('Error occurred', [
+        'error' => $e->getMessage(),
+        'code' => $e->getCode(),
+        'trace' => $e->getTraceAsString()
+    ]);
+    
+    // Map common error codes to user-friendly messages
+    $userMessage = match($e->getMessage()) {
+        'Email not confirmed' => 'Please check your email and confirm your account before logging in.',
+        'Invalid login credentials' => 'Invalid email or password. Please try again.',
+        'Email already registered' => 'An account with this email already exists.',
+        default => $e->getMessage()
+    };
+    
+    $response['message'] = $userMessage;
+    http_response_code($e->getCode() ?: 400);
 }
 
 echo json_encode($response);

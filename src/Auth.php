@@ -85,11 +85,13 @@ class Auth {
         }
         
         if ($httpCode >= 400) {
-            $errorMessage = isset($responseData['error']) ? 
-                           $responseData['error']['message'] : 
-                           ($responseData['message'] ?? 'Authentication error');
-            error_log("Supabase error: " . $errorMessage);
-            throw new Exception($errorMessage);
+            $errorMessage = $responseData['msg'] ?? 
+                           ($responseData['error']['message'] ?? 
+                           ($responseData['message'] ?? 'Authentication error'));
+            $errorCode = $responseData['error_code'] ?? 
+                        ($responseData['code'] ? 'error_' . $responseData['code'] : 'unknown_error');
+            error_log("Supabase error: [$errorCode] $errorMessage");
+            throw new Exception($errorMessage, $httpCode);
         }
         
         return $responseData;
