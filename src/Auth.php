@@ -7,6 +7,12 @@ class Auth {
     private function __construct() {
         $this->supabaseUrl = getenv('SUPABASE_URL');
         $this->supabaseKey = getenv('SUPABASE_ANON_KEY');
+        
+        if (empty($this->supabaseUrl) || empty($this->supabaseKey)) {
+            error_log("Missing Supabase configuration - URL: " . ($this->supabaseUrl ? "Set" : "Missing") . 
+                     ", Key: " . ($this->supabaseKey ? "Set" : "Missing"));
+            throw new Exception("Supabase configuration is incomplete. Please check your environment variables.");
+        }
     }
     
     public static function getInstance() {
@@ -17,8 +23,13 @@ class Auth {
     }
     
     private function makeRequest($endpoint, $method, $data = null) {
+        if (empty($this->supabaseUrl)) {
+            error_log("SUPABASE_URL is not set or empty");
+            throw new Exception("Supabase URL configuration is missing");
+        }
+
         $ch = curl_init();
-        $url = $this->supabaseUrl . '/auth/v1/' . $endpoint;
+        $url = rtrim($this->supabaseUrl, '/') . '/auth/v1/' . ltrim($endpoint, '/');
         
         error_log("Making request to Supabase: $method $url");
         if ($data) {
