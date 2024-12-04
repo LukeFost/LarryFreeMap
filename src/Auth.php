@@ -20,6 +20,11 @@ class Auth {
         $ch = curl_init();
         $url = $this->supabaseUrl . '/auth/v1/' . $endpoint;
         
+        error_log("Making request to Supabase: $method $url");
+        if ($data) {
+            error_log("Request data: " . json_encode($data));
+        }
+        
         $headers = [
             'Content-Type: application/json',
             'apikey: ' . $this->supabaseKey,
@@ -37,32 +42,77 @@ class Auth {
             }
         }
         
+        // Add verbose debugging
+        curl_setopt($ch, CURLOPT_VERBOSE, true);
+        $verbose = fopen('php://temp', 'w+');
+        curl_setopt($ch, CURLOPT_STDERR, $verbose);
+        
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         
+        // Log verbose output
+        rewind($verbose);
+        $verboseLog = stream_get_contents($verbose);
+        error_log("Curl verbose output: " . $verboseLog);
+        
         if (curl_errno($ch)) {
-            throw new Exception(curl_error($ch));
+            $error = curl_error($ch);
+            error_log("Curl error: " . $error);
+            curl_close($ch);
+            throw new Exception($error);
         }
+        
+        error_log("Response status code: " . $httpCode);
+        error_log("Response body: " . $response);
         
         curl_close($ch);
         
         $responseData = json_decode($response, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log("JSON decode error: " . json_last_error_msg());
+            throw new Exception("Invalid JSON response from server");
+        }
         
         if ($httpCode >= 400) {
-            throw new Exception($responseData['message'] ?? 'Authentication error');
+            $errorMessage = isset($responseData['error']) ? 
+                           $responseData['error']['message'] : 
+                           ($responseData['message'] ?? 'Authentication error');
+            error_log("Supabase error: " . $errorMessage);
+            throw new Exception($errorMessage);
         }
         
         return $responseData;
     }
     
     public function signUp($email, $password, $role = 'user') {
+        if (empty($email) || empty($password)) {
+            throw new Exception('Email and password are required');
+        }
+        
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception('Invalid email format');
+        }
+        
+        if (strlen($password) < 6) {
+            throw new Exception('Password must be at least 6 characters long');
+        }
+        
         $userData = [
             'email' => $email,
             'password' => $password,
             'data' => ['role' => $role]
         ];
         
-        return $this->makeRequest('signup', 'POST', $userData);
+        error_log("Attempting signup for email: $email with role: $role");
+        
+        try {
+            $result = $this->makeRequest('signup', 'POST', $userData);
+            error_log("Signup successful for: $email");
+            return $result;
+        } catch (Exception $e) {
+            error_log("Signup failed for $email: " . $e->getMessage());
+            throw $e;
+        }
     }
     
     public function signIn($email, $password) {
