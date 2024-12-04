@@ -6,27 +6,33 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         
         const formData = new FormData(this);
-        const url = new URL(this.action, window.location.origin);
         
         try {
-            const response = await fetch(url, {
+            console.log('Submitting to:', 'auth_handler.php');
+            const response = await fetch('auth_handler.php', {
                 method: 'POST',
                 body: formData
             });
             
-            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             
-            message.textContent = result.message;
+            const result = await response.json();
+            console.log('Server response:', result);
+            
+            message.textContent = result.message || 'An error occurred';
             message.style.display = 'block';
             message.className = 'message ' + (result.success ? 'success' : 'error');
             
-            if (result.success && result.data.redirect) {
+            if (result.success && result.data && result.data.redirect) {
                 setTimeout(() => {
                     window.location.href = result.data.redirect;
                 }, 1500);
             }
         } catch (error) {
-            message.textContent = 'An error occurred. Please try again.';
+            console.error('Error:', error);
+            message.textContent = 'An error occurred. Please try again. ' + error.message;
             message.style.display = 'block';
             message.className = 'message error';
         }
