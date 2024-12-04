@@ -91,8 +91,11 @@ function getCurrentLocation() {
 // Function to load and display buildings
 async function loadBuildings() {
     try {
+        console.log('Fetching buildings...');
         const response = await fetch('get_buildings.php');
+        console.log('Response status:', response.status);
         const buildings = await response.json();
+        console.log('Received buildings:', buildings);
         
         buildings.forEach(building => {
             const marker = L.marker([building.latitude, building.longitude])
