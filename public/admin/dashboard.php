@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/../../src/Middleware/AuthMiddleware.php';
 AuthMiddleware::requireRole('admin');
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
