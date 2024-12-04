@@ -6,9 +6,10 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         
         const formData = new FormData(this);
+        const url = new URL(this.action, window.location.origin);
         
         try {
-            const response = await fetch('auth_handler.php', {
+            const response = await fetch(url, {
                 method: 'POST',
                 body: formData
             });
