@@ -1,0 +1,123 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f6fa;
+}
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+header nav {
+    display: flex;
+    gap: 15px;
+}
+
+header nav a {
+    color: #3498db;
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+header nav a:hover {
+    background-color: #f5f6fa;
+}
+
+section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #2c3e50;
+    margin-top: 0;
+}
+
+.property-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.property-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.property-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.property-info {
+    padding: 15px;
+}
+
+.property-info h3 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+}
+
+.property-info p {
+    margin: 5px 0;
+    color: #7f8c8d;
+}
+
+.search-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.search-item {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-item button {
+    padding: 5px 10px;
+    border: none;
+    background: #3498db;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-item button:hover {
+    background: #2980b9;
+}
